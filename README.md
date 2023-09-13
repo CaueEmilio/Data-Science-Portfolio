@@ -1,2 +1,2 @@
-# Data-Science
-Repositório para projetos de Data Science
+# Data Science
+My repository for all my Data Science projects shown on my portifolio
