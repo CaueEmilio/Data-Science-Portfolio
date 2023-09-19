@@ -208,8 +208,6 @@ FROM VacAndDeathByDay
 ORDER BY date
 
 
-
-
 /* Creating Auxiliary table for the rolling totals aggregated by location and date*/ 
 DROP TABLE IF EXISTS #RollingTotalsByLocation
 CREATE TABLE #RollingTotalsByLocation ( 
@@ -265,3 +263,34 @@ SELECT
 	,total_vaccinations
 FROM #RollingTotalsByLocation
 ORDER BY location, date;
+
+
+/* Creating Views for later visualizations */
+CREATE VIEW DeathAndInfectionRatesByCountry AS
+SELECT 
+	location
+	,date
+	,total_cases
+	,total_deaths
+	,(total_deaths/total_cases*100) AS death_rate
+FROM ..[owid-covid-data]
+WHERE location IN('Low income','Lower middle income','Upper middle income','High income');
+
+
+CREATE VIEW VaccDeathAndInfectionRatesByDay AS
+WITH VacAndDeathByDay (date, world_population,total_cases,total_deaths,total_vaccinations)
+AS (SELECT DISTINCT
+		date
+		,(SELECT MAX(population) FROM [owid-covid-data] WHERE location = 'World') AS world_population
+		,NULLIF(SUM(new_cases) OVER (ORDER BY date),0) AS total_cases
+		,NULLIF(SUM(new_deaths) OVER (ORDER BY date),0) AS total_deaths
+		,NULLIF(SUM(new_vaccinations) OVER (ORDER BY date),0) AS total_vaccinations
+	FROM ..[owid-covid-data]
+	WHERE continent is not null
+	)
+SELECT 
+	*
+	,total_deaths/total_cases*100 AS death_rate
+	,total_cases/world_population*100 AS infection_rate
+	,total_vaccinations/world_population*100 AS vaccinations_rate
+FROM VacAndDeathByDay;
