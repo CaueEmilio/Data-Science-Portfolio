@@ -193,9 +193,9 @@ WITH VacAndDeathByDay (date, world_population,total_cases,total_deaths,total_vac
 AS (SELECT DISTINCT
 		date
 		,(SELECT MAX(population) FROM [owid-covid-data] WHERE location = 'World') AS world_population
-		,NULLIF(SUM(new_cases) OVER (ORDER BY date),0) AS total_cases
-		,NULLIF(SUM(new_deaths) OVER (ORDER BY date),0) AS total_deaths
-		,NULLIF(SUM(new_vaccinations) OVER (ORDER BY date),0) AS total_vaccinations
+		,ISNULL(SUM(new_cases) OVER (ORDER BY date),0) AS total_cases
+		,ISNULL(SUM(new_deaths) OVER (ORDER BY date),0) AS total_deaths
+		,ISNULL(SUM(new_vaccinations) OVER (ORDER BY date),0) AS total_vaccinations
 	FROM ..[owid-covid-data]
 	WHERE continent is not null
 	)
@@ -232,9 +232,9 @@ SELECT
 	,new_cases
 	,new_deaths
 	,new_vaccinations
-	,NULLIF(SUM(new_cases) OVER (PARTITION BY location ORDER BY date),0)
-	,NULLIF(SUM(new_deaths) OVER (PARTITION BY location ORDER BY date),0)
-	,NULLIF(SUM(new_vaccinations) OVER (PARTITION BY location ORDER BY date),0)
+	,ISNULL(SUM(new_cases) OVER (PARTITION BY location ORDER BY date),0)
+	,ISNULL(SUM(new_deaths) OVER (PARTITION BY location ORDER BY date),0)
+	,ISNULL(SUM(new_vaccinations) OVER (PARTITION BY location ORDER BY date),0)
 FROM ..[owid-covid-data]
 WHERE continent is not null
 GROUP BY date, location, continent,new_cases,new_deaths,new_vaccinations
@@ -282,9 +282,9 @@ WITH VacAndDeathByDay (date, world_population,total_cases,total_deaths,total_vac
 AS (SELECT DISTINCT
 		date
 		,(SELECT MAX(population) FROM [owid-covid-data] WHERE location = 'World') AS world_population
-		,NULLIF(SUM(new_cases) OVER (ORDER BY date),0) AS total_cases
-		,NULLIF(SUM(new_deaths) OVER (ORDER BY date),0) AS total_deaths
-		,NULLIF(SUM(new_vaccinations) OVER (ORDER BY date),0) AS total_vaccinations
+		,ISNULL(SUM(new_cases) OVER (ORDER BY date),0) AS total_cases
+		,ISNULL(SUM(new_deaths) OVER (ORDER BY date),0) AS total_deaths
+		,ISNULL(SUM(new_vaccinations) OVER (ORDER BY date),0) AS total_vaccinations
 	FROM ..[owid-covid-data]
 	WHERE continent is not null
 	)
