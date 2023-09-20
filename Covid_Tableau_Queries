@@ -1,5 +1,5 @@
 /* 
-All Queries used for the Tableau Dashboard
+All Queries used for the Tableau Dashboard available here: https://public.tableau.com/views/Porfolio-CovidDashboard/Painel1?:language=en-US&:display_count=n&:origin=viz_share_link
 Since Tableau public was used for this project, the queries enumerated below were made on a local SQL Database (MSSQLServer), extracted to an Excel sheet and then uploaded to Tableau 
 */
 
