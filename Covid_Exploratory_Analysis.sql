@@ -1,4 +1,4 @@
-/* Data exploration */ 
+/* Data exploration of data extracted from: https://ourworldindata.org/covid-deaths */ 
 SELECT * FROM ..[owid-covid-data];
 
 /* Death Analysis */
