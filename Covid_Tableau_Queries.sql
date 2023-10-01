@@ -68,3 +68,33 @@ FROM ..[owid-covid-data]
 GROUP BY Location, Population, date;
 
 -- We got to a point where the infection rate can surpass 100%, since people are getting reinfected due to new variants and an overall decrease in letallity
+
+/* 5. Death and Infection Rate by Income*/
+CREATE VIEW DeathAndInfectionRatesByIncome AS
+SELECT 
+	location
+	,date
+	,total_cases
+	,total_deaths
+	,(total_deaths/total_cases*100) AS death_rate
+FROM ..[owid-covid-data]
+WHERE location IN('Low income','Lower middle income','Upper middle income','High income');
+
+/* 6. Daily Vaccination, Infection and Death rates*/
+CREATE VIEW VaccDeathAndInfectionRatesByDay AS
+WITH VacAndDeathByDay (date, world_population,total_cases,total_deaths,total_vaccinations)
+AS (SELECT DISTINCT
+		date
+		,(SELECT MAX(population) FROM [owid-covid-data] WHERE location = 'World') AS world_population
+		,ISNULL(SUM(new_cases) OVER (ORDER BY date),0) AS total_cases
+		,ISNULL(SUM(new_deaths) OVER (ORDER BY date),0) AS total_deaths
+		,ISNULL(SUM(new_vaccinations) OVER (ORDER BY date),0) AS total_vaccinations
+	FROM ..[owid-covid-data]
+	WHERE continent is not null
+	)
+SELECT 
+	*
+	,total_deaths/total_cases*100 AS death_rate
+	,total_cases/world_population*100 AS infection_rate
+	,total_vaccinations/world_population*100 AS vaccinations_rate
+FROM VacAndDeathByDay;
